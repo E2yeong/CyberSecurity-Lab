@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Basic Linux Commands</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      line-height: 1.7;
+      margin: 0;
+      padding: 0;
+      background: #f8f9fa;
+      color: #222;
+    }
+    header {
+      background: #2c3e50;
+      color: white;
+      padding: 1.5rem 2rem;
+      text-align: center;
+    }
+    section {
+      max-width: 900px;
+      margin: 2rem auto;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+    h2 {
+      border-bottom: 2px solid #eee;
+      padding-bottom: 0.4rem;
+      margin-bottom: 1rem;
+      color: #2c3e50;
+    }
+    h3 {
+      margin-top: 1.4rem;
+      color: #34495e;
+    }
+    pre {
+      background: #f4f4f4;
+      padding: 0.8rem;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+    .note {
+      background: #fff3cd;
+      border-left: 4px solid #ffcc00;
+      padding: 0.8rem;
+      margin: 1rem 0;
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+    .link {
+      margin-top: 1.2rem;
+      font-size: 0.95rem;
+    }
+    a {
+      color: #1d6fdc;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .Link {
+      display: inline-block;
+      margin-bottom: 1.5rem;
+      padding: 0.6rem 1.2rem;
+      background: #3498db;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      margin-left: 30%;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🐧 Basic Linux Commands</h1>
+  </header>
+
+  <section>
+    <h2>Introduction</h2>
+    <p>Linux commands are executed in the <strong>terminal</strong> (also known as the shell or command line). 
+    Mastering a few essential commands will help you navigate, manage files, and interact with the operating system efficiently. 
+    Below are some of the most widely used commands for beginners and professionals alike.</p>
+  </section>
+
+  <section>
+    <h2>Frequently Used Commands</h2>
+
+    <h3>1. <code>ls</code> – List Files</h3>
+    <p>Displays the contents of the current directory.</p>
+    <pre>$ ls
+Desktop  Documents  Downloads  file.txt</pre>
+    <p>Options:</p>
+    <ul>
+      <li><code>ls -l</code> → long listing format (permissions, owner, size, date)</li>
+      <li><code>ls -a</code> → show hidden files (those starting with <code>.</code>)</li>
+      <li><code>ls -lh</code> → human-readable sizes (KB, MB, GB)</li>
+    </ul>
+
+    <h3>2. <code>cd</code> – Change Directory</h3>
+    <p>Navigate between directories.</p>
+    <pre>$ cd /home/user/Documents</pre>
+    <p>Tips:</p>
+    <ul>
+      <li><code>cd ~</code> → go to home directory</li>
+      <li><code>cd ..</code> → move up one directory</li>
+    </ul>
+
+    <h3>3. <code>rm</code> – Remove Files/Directories</h3>
+    <p>Deletes files or directories.</p>
+    <pre>$ rm file.txt
+$ rm -rf folder_name</pre>
+    <div class="note">⚠️ <strong>Warning:</strong> <code>rm</code> permanently deletes files—there is no recycle bin.</div>
+
+    <h3>4. <code>cp</code> – Copy Files</h3>
+    <p>Copies files or directories.</p>
+    <pre>$ cp file.txt /home/user/backup/</pre>
+    <p>Options:</p>
+    <ul>
+      <li><code>cp -r folder/ /home/user/backup/</code> → copy directories recursively</li>
+    </ul>
+
+    <h3>5. <code>mv</code> – Move/Rename Files</h3>
+    <p>Moves or renames files and directories.</p>
+    <pre>$ mv file.txt /home/user/Documents/
+$ mv oldname.txt newname.txt</pre>
+
+    <h3>6. <code>cat</code> – View File Contents</h3>
+    <p>Displays the content of a file.</p>
+    <pre>$ cat file.txt</pre>
+    <p>Useful with piping:</p>
+    <pre>$ cat file.txt | grep "keyword"</pre>
+  </section>
+
+  <section>
+    <h2>Additional Useful Commands</h2>
+    <ul>
+      <li><code>pwd</code> → Print current working directory</li>
+      <li><code>touch</code> → Create an empty file</li>
+      <li><code>mkdir</code> → Create a new directory</li>
+      <li><code>rmdir</code> → Remove an empty directory</li>
+      <li><code>man</code> → Open manual pages for a command (e.g., <code>man ls</code>)</li>
+      <li><code>chmod</code> → Change file permissions</li>
+      <li><code>chown</code> → Change file ownership</li>
+      <li><code>grep</code> → Search inside files</li>
+      <li><code>find</code> → Search for files in directories</li>
+      <li><code>tar</code> / <code>gzip</code> → Archive and compress files</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Conclusion</h2>
+    <p>These commands form the foundation of Linux system interaction. 
+    Mastering them will allow you to navigate, manage files, and perform administrative tasks effectively. 
+    As you progress, you’ll combine them with pipes (<code>|</code>) and redirection (<code>&gt;</code>, <code>&lt;</code>) to build powerful workflows.</p>
+
+    <div class="link">
+      🔗 Explore more commands: 
+      <a href="https://www.mediacollege.com/linux/command/linux-command.html" target="_blank">
+        MediaCollege – Linux Command Reference
+      </a>
+    </div>
+  </section>
+  <a href="https://e2yeong.github.io/CyberSecurity-Lab/Network/Network2"><p class="Link">Back</p></a>
+  <a href="https://e2yeong.github.io/CyberSecurity-Lab/Network/Network2/Network3/Network4"><p class="Link">Next</p></a>
+</body>
+</html>
