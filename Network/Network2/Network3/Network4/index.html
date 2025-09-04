@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Network Hacking: Concepts, Setup, and Safer Practices</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; line-height: 1.7; margin: 0; padding: 0; background: #f8f9fa; color: #222; }
+    header { background: #2c3e50; color: white; padding: 1.5rem 2rem; text-align: center; }
+    section { max-width: 950px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+    h2 { border-bottom: 2px solid #eee; padding-bottom: 0.4rem; margin-bottom: 1rem; color: #2c3e50; }
+    h3 { margin-top: 1.4rem; color: #34495e; }
+    ul { padding-left: 1.5rem; }
+    li { margin-bottom: 0.5rem; }
+    .example { background: #eef7ff; border-left: 4px solid #3498db; padding: 1rem; margin: 1rem 0; border-radius: 8px; }
+    .note { background: #fff3cd; border-left: 4px solid #ffcc00; padding: 1rem; border-radius: 6px; margin: 1rem 0; }
+    .kbd { background: #f1f3f5; border: 1px solid #dee2e6; border-radius: 6px; padding: 0.1rem 0.4rem; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    pre { background: #f4f4f4; padding: 0.8rem; border-radius: 6px; overflow-x: auto; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    a { color: #1d6fdc; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🌐 Network Hacking: Concepts, Setup, and Safer Practices</h1>
+  </header>
+
+  <section>
+    <h2>Overview</h2>
+    <p><strong>Network hacking</strong> examines how data moves, how devices connect, and where weaknesses may exist. 
+    Properly practiced (only on systems you own or have written permission to test), it helps you <em>defend</em> networks by understanding how attacks work.</p>
+    <div class="example">
+      <strong>What can network hacking do?</strong>  
+      In insecure environments, an attacker could <em>intercept</em> data in transit (e.g., unencrypted HTTP), alter traffic, phish credentials via rogue networks, or pivot laterally once inside.
+    </div>
+    <div class="note">⚠️ <strong>Legal/Ethical</strong>: Test only on your own lab or with explicit authorization. Laws vary by country; non-consensual testing can be illegal.</div>
+  </section>
+
+  <section>
+    <h2>Three Phases You Asked For</h2>
+
+    <h3>1) Pre-Connection Attacks (No Association)</h3>
+    <ul>
+      <li><strong>OSINT & Recon of RF space</strong>: Learn which SSIDs exist, their channels, and encryption types (e.g., WPA2/WPA3). This is passive spectrum awareness for defense planning.</li>
+      <li><strong>Evil-Twin Lures (high-level)</strong>: A rogue AP mimics a trusted SSID to trick users into connecting. Defense: prefer WPA2/WPA3 with known certificates; educate users; disable auto-join on public SSIDs.</li>
+      <li><strong>WPS Weaknesses (conceptual)</strong>: Some older routers with WPS enabled are susceptible to PIN attacks. Defense: disable WPS if not needed; update firmware.</li>
+      <li><strong>Open Networks Risks</strong>: Any user can sniff broadcast/unprotected traffic. Defense: avoid open Wi-Fi or use end-to-end encryption (HTTPS, TLS-based apps).</li>
+    </ul>
+
+    <h3>2) Gaining Network Access (Legitimate/Lab)</h3>
+    <ul>
+      <li><strong>Authorized Access</strong>: In a <em>lab</em>, connect to your own test Wi-Fi or wired switch to practice segmentation, logging, and detection. For enterprises, use guest networks and 802.1X for control.</li>
+      <li><strong>Physical & Defaults</strong>: Many breaches begin with default admin creds or physical access. Defense: change defaults, lock equipment, segment management networks.</li>
+      <li><strong>Credential Hygiene</strong>: Phishing and password reuse often unlock networks without “exploits.” Defense: MFA, strong passphrases, password managers, anti-phishing training.</li>
+    </ul>
+
+    <h3>3) Post-Connection Attacks (Need Association)</h3>
+    <ul>
+      <li><strong>Traffic Interception (conceptual)</strong>: On unencrypted links, an attacker might attempt man-in-the-middle techniques (e.g., ARP/DNS spoofing). Defense: enforce HTTPS/HSTS, DNSSEC/DoH, switch features like Dynamic ARP Inspection, DHCP Snooping, and network segmentation.</li>
+      <li><strong>Lateral Movement</strong>: Once on the LAN, misconfigured services (file shares, default creds) can be abused. Defense: least privilege, EDR on hosts, internal firewalls, micro-segmentation, good patching.</li>
+      <li><strong>Service Enumeration</strong>: Mapping open ports/services can guide attacks. Defense: host firewalls, close unnecessary ports, network ACLs, continuous scanning (by defenders).</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Wireless Adapter Requirements (for Lab Work)</h2>
+    <p>To analyze Wi-Fi at a professional level in a <em>controlled lab</em>, a USB adapter with these capabilities is typically chosen:</p>
+    <ul>
+      <li><strong>Monitor Mode</strong> — observe 802.11 frames over the air for diagnostics.</li>
+      <li><strong>Packet Injection</strong> — useful in some <em>defensive</em> simulations and testing toolchains.</li>
+      <li><strong>AP Mode</strong> — run an access point for legitimate lab experiments.</li>
+    </ul>
+    <p><strong>Popular chipsets</strong> (driver support matters): <em>Realtek RTL8812AU</em>, <em>Atheros AR9271</em> (e.g., Alfa AWUS036NHA). Always verify current driver support for your OS.</p>
+  </section>
+
+  <section>
+    <h2>Setting Up in a VM (Kali in VirtualBox)</h2>
+    <p>You can practice safely in a VM; no need to buy a separate Linux machine.</p>
+    <ol>
+      <li><strong>Install VirtualBox</strong> and enable USB support for the VM (USB 2.0/3.0 controller).</li>
+      <li><strong>Attach the USB Wi-Fi adapter</strong> to the VM (VM → USB → select your adapter or add a USB filter).</li>
+      <li><strong>Verify the interface</strong> inside Kali:
+        <pre>$ ip addr        # Modern replacement for ifconfig
+$ iw dev          # Show wireless interfaces
+$ lsusb           # Confirm the USB adapter is detected
+$ dmesg | tail    # Driver messages after plugging in</pre>
+        <div class="note">ℹ️ In older guides you’ll see <span class="kbd">ifconfig</span>. It still works on many systems, but <span class="kbd">ip addr</span> is the modern standard. The loopback interface is <strong>lo</strong>, not “l0”.</div>
+      </li>
+      <li><strong>Check capabilities</strong> (conceptually): Confirm the driver supports monitor/AP modes. Refer to your adapter’s documentation for enabling those modes in your lab.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Safer, Structured Learning Path</h2>
+    <ul>
+      <li><strong>Phase A — Observation</strong>: Understand SSIDs, channels, and encryption types; review logs and signal quality in your lab to learn normal vs. abnormal patterns.</li>
+      <li><strong>Phase B — Hardening</strong>: Disable WPS, use strong WPA2/WPA3 settings, change default passwords, segment guest and admin networks, and keep firmware up to date.</li>
+      <li><strong>Phase C — Monitoring & Detection</strong>: Practice collecting logs/flows (AP, router, switch, OS), set alerts for anomalies (unknown APs, excessive associations), and validate that protections (HSTS, DNSSEC) are effective.</li>
+      <li><strong>Phase D — Response Drills</strong>: Build playbooks for suspected rogue APs, DNS poisoning attempts, or credential compromise. Practice containment steps in your lab.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Defensive Tips by Scenario</h2>
+    <ul>
+      <li><strong>Public Wi-Fi</strong>: Prefer LTE/5G or trusted hotspots. If you must use public Wi-Fi, prefer VPN, ensure HTTPS padlock, and disable auto-join on unknown SSIDs.</li>
+      <li><strong>Home/Small Office</strong>: Use WPA2/WPA3 with a strong passphrase, unique admin credentials, firmware updates, and separate IoT/guest networks.</li>
+      <li><strong>Enterprise</strong>: 802.1X (EAP-TLS), NAC, DHCP Snooping, DAI, private VLANs, IDS/IPS, and strong certificate management.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Conclusion</h2>
+    <p>We covered the three stages you outlined—<strong>pre-connection</strong> (recon and risks without association), <strong>access</strong> (legitimate/lab entry points), and <strong>post-connection</strong> (interception and lateral risks)—plus safer setup and defensive practices. 
+    Mastering these fundamentals in a lawful lab environment builds the mindset and skills needed to protect real networks.</p>
+  </section>
+</body>
+</html>
