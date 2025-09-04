@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Password Hashing: From Data Structures to Security Best Practices</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    body { font-family: 'Inter', sans-serif; line-height: 1.7; margin: 0; padding: 0; background: #f8f9fa; color: #222; }
+    header { background: #2c3e50; color: white; padding: 1.5rem 2rem; text-align: center; }
+    section { max-width: 1000px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+    h2 { border-bottom: 2px solid #eee; padding-bottom: 0.4rem; margin-bottom: 1rem; color: #2c3e50; }
+    h3 { margin-top: 1.2rem; color: #34495e; }
+    ul { padding-left: 1.5rem; }
+    li { margin-bottom: 0.45rem; }
+    pre { background: #f4f4f4; padding: 0.9rem; border-radius: 6px; overflow-x: auto; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    .note { background: #fff3cd; border-left: 4px solid #ffcc00; padding: 1rem; border-radius: 6px; margin: 1rem 0; }
+    .example { background: #eef7ff; border-left: 4px solid #3498db; padding: 1rem; border-radius: 8px; margin: 1rem 0; }
+    .meta { font-size: 0.9rem; color: #555; margin-bottom: 1rem; font-style: italic; }
+    .kbd { background: #f1f3f5; border: 1px solid #dee2e6; border-radius: 6px; padding: 0.1rem 0.4rem; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    .linkbtn { display:inline-block; margin:0.75rem 0.5rem 0 0; padding:0.6rem 1.2rem; background:#3498db; color:#fff; text-decoration:none; border-radius:6px; }
+    a { color:#1d6fdc; text-decoration:none; }
+    a:hover { text-decoration:underline; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🔒 Password Hashing — From Data Structures to Secure Storage</h1>
+    <p style="margin:.25rem 0 0 0; opacity:.9">Theory, modern algorithms, and defense-grade practices</p>
+  </header>
+
+  <section>
+    <!-- Optional original date/link -->
+    <!-- <a href="YOUR_NAVER_LINK"><p class="meta">Originally posted on YYYY.MM.DD (Naver Blog)</p></a> -->
+    <h2>1) Introduction</h2>
+    <p>Most Internet services (email, shopping, social media) still authenticate users with <strong>passwords</strong>. If passwords are stored insecurely, a single database breach can compromise millions of accounts. Storing passwords in <em>plain text</em> is catastrophic: attackers who steal the DB immediately gain access to every account.</p>
+    <p>The industry has long emphasized: <strong>Never store passwords in plain text.</strong> The essential concept that enables safe storage is <strong>hashing</strong>. Originally popularized in data structures for fast lookup, hashing is now foundational to password security. This guide covers both perspectives.</p>
+  </section>
+
+  <section>
+    <h2>2) Hashing in Data Structures 🔑</h2>
+
+    <h3>(a) Limits of traditional search</h3>
+    <ul>
+      <li>Unsorted list: <code>O(n)</code> linear scan</li>
+      <li>Sorted list / binary search: <code>O(log n)</code></li>
+    </ul>
+    <p>When even faster lookups are required, <strong>hashing</strong> arrives.</p>
+
+    <h3>(b) Hash tables</h3>
+    <p>A hash function maps a key to an array index. Instead of comparing keys one by one, we “jump” directly to a slot—achieving average-case <code>O(1)</code> lookup.</p>
+    <div class="example">
+      <strong>Example:</strong><br/>
+      Key: <code>"apple"</code> → hash → <code>27</code><br/>
+      Store at: <code>hashTable[27] = "사과"</code>
+    </div>
+    <p>This is why hash-based maps/dictionaries are the usual best choice for key–value structures.</p>
+
+    <h3>(c) Collisions</h3>
+    <p>Different keys may map to the same index (a <em>collision</em>). Common strategies include:</p>
+    <ul>
+      <li><strong>Chaining</strong>: Store a list (or tree) of items in each bucket.</li>
+      <li><strong>Open addressing</strong>: Probe for the next open slot by a strategy (linear, quadratic, double hashing).</li>
+    </ul>
+    <div class="note">⚠️ If collisions grow, performance can degrade from <code>O(1)</code> toward <code>O(n)</code>. Use good hash functions and resize policies.</div>
+  </section>
+
+  <section>
+    <h2>3) Hashing for Password Security 🔐</h2>
+
+    <h3>(a) What is a cryptographic hash?</h3>
+    <p>It transforms an input (e.g., a password) into a fixed-length, “random-looking” string.</p>
+    <div class="example">
+      <strong>Input:</strong> <code>mypassword</code><br/>
+      <strong>SHA-256:</strong> <code>89E01536AC207279409D4DE1E5253E01F4A1769E696DB0D6062CA9B8F56767C8</code>
+    </div>
+    <p><strong>Properties:</strong></p>
+    <ul>
+      <li><em>One-way</em>: Infeasible to recover the original input from the hash.</li>
+      <li><em>Collision resistance</em>: Hard to find two different inputs with the same hash.</li>
+      <li><em>Fixed length</em>: Output size is constant regardless of input length.</li>
+    </ul>
+
+    <h3>(b) The problem with fast hashes</h3>
+    <p>General-purpose hashes (MD5, SHA-1, even SHA-256) are <em>too fast</em>. Speed helps attackers use GPUs/ASICs to brute-force or leverage rainbow tables. Therefore, password storage requires <strong>specialized, slow, and preferably memory-hard schemes</strong>, not raw SHA-256.</p>
+    <p class="meta">Ref: Menezes et al., <em>Handbook of Applied Cryptography</em> (1996)</p>
+  </section>
+
+  <section>
+    <h2>4) Salting (🧂) — Why and how</h2>
+
+    <h3>(a) Why salt?</h3>
+    <p>Identical passwords produce identical hashes. If 1,000 users choose <code>123456</code>, they’ll have the same hash—trivial for attackers with precomputed tables.</p>
+
+    <h3>(b) How salt works</h3>
+    <div class="example">
+      <strong>Password:</strong> <code>123456</code><br/>
+      <strong>Salt:</strong> <code>Xy9!@2z#</code><br/>
+      <strong>Hash input:</strong> <code>123456Xy9!@2z#</code> → <em>hash</em> → different result
+    </div>
+
+    <h3>(c) Effects</h3>
+    <ul>
+      <li>Same password + different salt → different hash (thwarts rainbow tables).</li>
+      <li>Unique per-user salts hinder credential stuffing analytics by hash comparison.</li>
+    </ul>
+    <p class="meta">Ref: Provos &amp; Mazieres, “A Future-Adaptable Password Scheme” (1999)</p>
+  </section>
+
+  <section>
+    <h2>5) Modern Password Hashing Algorithms ⚙️</h2>
+    <p><strong>Use password-specific hashing schemes</strong> with controlled cost. Today’s widely recommended options:</p>
+    <ul>
+      <li><strong>bcrypt</strong> (1999): Built-in salt; tunable work factor (cost).</li>
+      <li><strong>scrypt</strong> (2009): Memory-hard; resists GPU/ASIC parallelism.</li>
+      <li><strong>Argon2</strong> (2015): PHC winner; tunable memory/time/parallelism; current best practice.</li>
+    </ul>
+    <div class="note">
+      Summary:<br/>
+      • Raw SHA-256 → vulnerable to offline cracking<br/>
+      • SHA-256 + salt → better (stops rainbow tables) but still too fast<br/>
+      • bcrypt/scrypt/Argon2 → <strong>salt + iterations + (for scrypt/Argon2) memory-hardness</strong>
+    </div>
+    <p class="meta">Ref: Biryukov et al., “Argon2: the memory-hard function…” (2016)</p>
+  </section>
+
+  <section>
+    <h2>6) Best Practices 📌</h2>
+
+    <h3>(a) Algorithm & parameters</h3>
+    <ul>
+      <li><strong>Prefer Argon2id</strong> (hybrid) or <strong>bcrypt</strong>/ <strong>scrypt</strong> where Argon2 isn’t available.</li>
+      <li><strong>Salt</strong>: unique, random (≥ 16 bytes) per password; store alongside the hash.</li>
+      <li><strong>Cost tuning</strong>: adjust memory/time/iterations to reach a target verification time (e.g., 100–250 ms) on your server hardware.</li>
+      <li><strong>Pepper</strong>: optional server-side secret (HSM/KMS or env-level secret) combined <em>in addition</em> to per-user salt.</li>
+    </ul>
+
+    <h3>(b) Storage format</h3>
+    <p>Use a self-describing format (algorithm + params + salt + hash). For example:</p>
+    <pre>
+$argon2id$v=19$m=65536,t=3,p=1$[base64(salt)]$[base64(hash)]
+    </pre>
+
+    <h3>(c) Migration strategy</h3>
+    <ul>
+      <li>Keep legacy verification for existing users; on next successful login, re-hash with Argon2id and store the new format.</li>
+      <li>Set a policy to refuse legacy hashes after a transition window.</li>
+    </ul>
+
+    <h3>(d) Ecosystem controls</h3>
+    <ul>
+      <li><strong>Block breached passwords</strong> (use a “compromised password” list check during signup/reset).</li>
+      <li><strong>Rate limiting & progressive delays</strong> on authentication endpoints.</li>
+      <li><strong>MFA</strong> (TOTP, WebAuthn, FIDO2) to mitigate phished or reused passwords.</li>
+      <li><strong>Secrets management</strong> for pepper/keys (HSM, cloud KMS), strict access control, auditing.</li>
+      <li><strong>Monitoring</strong> (SIEM): unusual login velocity, many failures, impossible travel, password spraying patterns.</li>
+    </ul>
+
+    <h3>(e) Policy alignment</h3>
+    <ul>
+      <li><strong>NIST SP 800-63B</strong> (2020): salting + memory-hard KDFs, no arbitrary composition rules, allow long passphrases, block known breached passwords.</li>
+      <li><strong>OWASP</strong> (2021): Argon2/bcrypt/scrypt; per-user unique salts; high iteration counts; secure storage.</li>
+      <li><strong>ISO/IEC 27001:2022</strong>: enforce password management policies; protect credentials in storage and transit.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>7) Common Pitfalls (to avoid)</h2>
+    <ul>
+      <li>Storing <em>plain text</em> or reversible encryption of passwords.</li>
+      <li>Using <em>fast</em> hashes (MD5/SHA-1/SHA-256) alone for password storage.</li>
+      <li>Global (shared) salt for all users (defeats salt’s purpose).</li>
+      <li>Too-short salts (predictable) or non-random generation.</li>
+      <li>Fixed, low iteration counts that never evolve with hardware improvements.</li>
+      <li>Logging password values or hashes in plaintext logs.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>8) Incident Response Considerations</h2>
+    <ul>
+      <li><strong>Hash exposure</strong>: Assume offline cracking attempts; force credential rotation; revoke tokens; notify users.</li>
+      <li><strong>Telemetry</strong>: Watch for spikes in failed logins or credential stuffing across services.</li>
+      <li><strong>Postmortem</strong>: Improve cost parameters, add breached-password checks, tighten rate limiting and MFA adoption.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>9) Conclusion ✨</h2>
+    <p>Hashing began as a powerful tool in data structures (average <code>O(1)</code> lookups) and now anchors secure password storage. With <strong>unique salts</strong> and <strong>modern, slow, memory-hard algorithms</strong> (Argon2/bcrypt/scrypt), we can robustly protect user credentials—aligned with <strong>NIST</strong>, <strong>OWASP</strong>, and <strong>ISO</strong> guidance.</p>
+    <p>Security is a system: combine strong hashing with MFA, breached-password checks, rate limiting, and sound secrets management to build an authentication stack resilient to modern threats.</p>
+  </section>
+
+  <section>
+    <h2>References 📚</h2>
+    <ul>
+      <li>Menezes, A. J., van Oorschot, P. C., &amp; Vanstone, S. A. (1996). <em>Handbook of Applied Cryptography</em>. CRC Press.</li>
+      <li>Provos, N., &amp; Mazieres, D. (1999). <em>A Future-Adaptable Password Scheme</em>. USENIX ATC.</li>
+      <li>Biryukov, A., Dinu, D., &amp; Khovratovich, D. (2016). <em>Argon2: the memory-hard function for password hashing</em>.</li>
+      <li>OWASP (2021). <em>Password Storage Cheat Sheet</em>.</li>
+      <li>NIST (2020). <em>Digital Identity Guidelines — SP 800-63B</em>.</li>
+      <li>ISO/IEC 27001:2022. <em>Information security management systems</em>.</li>
+    </ul>
+  </section>
+
+  <!-- Optional navigation; update links to your structure -->
+  <!--
+  <nav style="max-width:1000px; margin:0 auto 2rem auto; padding:0 2rem;">
+    <a class="linkbtn" href="https://e2yeong.github.io/CyberSecurity-Lab/Security/Passwords">Back</a>
+    <a class="linkbtn" href="https://e2yeong.github.io/CyberSecurity-Lab/Security/Passwords/Hashing2">Next</a>
+  </nav>
+  -->
+</body>
+</html>
