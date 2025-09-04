@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monitor Mode & Packet Sniffing (Wi-Fi)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; line-height: 1.7; margin: 0; padding: 0; background: #f8f9fa; color: #222; }
+    header { background: #2c3e50; color: white; padding: 1.5rem 2rem; text-align: center; }
+    section { max-width: 950px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+    h2 { border-bottom: 2px solid #eee; padding-bottom: 0.4rem; margin-bottom: 1rem; color: #2c3e50; }
+    h3 { margin-top: 1.4rem; color: #34495e; }
+    ul { padding-left: 1.5rem; }
+    li { margin-bottom: 0.5rem; }
+    pre { background: #f4f4f4; padding: 0.8rem; border-radius: 6px; overflow-x: auto; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    .example { background: #eef7ff; border-left: 4px solid #3498db; padding: 1rem; margin: 1rem 0; border-radius: 8px; }
+    .note { background: #fff3cd; border-left: 4px solid #ffcc00; padding: 1rem; border-radius: 6px; margin: 1rem 0; }
+    .kbd { background: #f1f3f5; border: 1px solid #dee2e6; border-radius: 6px; padding: 0.1rem 0.4rem; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    a { color: #1d6fdc; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .meta { font-size: 0.9rem; color: #555; margin-bottom: 1rem; font-style: italic; }
+    .Link {
+      display: inline-block; margin-bottom: 1.5rem; padding: 0.6rem 1.2rem;
+      background: #3498db; color: white; text-decoration: none; border-radius: 6px;
+      margin-left: 30%; align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📡 Monitor Mode & Packet Sniffing (Wi-Fi)</h1>
+  </header>
+
+  <section>
+    <!-- Optional: add your original link/date -->
+    <!-- <a href="https://blog.naver.com/ddak_sound/223734306515"><p class="meta">Originally posted on 2025.01.22 (Naver Blog)</p></a> -->
+
+    <h2>Overview</h2>
+    <p>When a client sends data, it is transmitted in the form of <strong>packets</strong>. Over Wi-Fi, these are IEEE 802.11 <em>frames</em> on the air. 
+    A wireless adapter can <strong>capture</strong> them if it is placed in <strong>monitor mode</strong> (not the default “managed” mode).</p>
+    <div class="example">
+      <strong>Frame families (802.11):</strong>
+      <ul>
+        <li><em>Management</em> — beacons, probe requests/responses, authentication, association</li>
+        <li><em>Control</em> — RTS/CTS/ACK aiding medium access</li>
+        <li><em>Data</em> — actual payloads carried once associated</li>
+      </ul>
+      In managed mode, you generally see traffic for your station. In monitor mode, you can observe RF traffic (channels, SSIDs, management/control frames) in your <em>authorized lab</em>.
+    </div>
+    <div class="note">⚠️ <strong>Legal/Ethical</strong>: Capture only in your own lab or with explicit permission. Unauthorized interception can be illegal. Use these skills to defend and diagnose.</div>
+  </section>
+
+  <section>
+    <h2>Managed vs Promiscuous vs Monitor</h2>
+    <ul>
+      <li><strong>Managed</strong>: Default client mode; the NIC connects to one AP and processes frames destined for it.</li>
+      <li><strong>Promiscuous</strong>: NIC passes all received Ethernet frames to the OS (wired/wifi post-association) — not the same as RF monitor mode.</li>
+      <li><strong>Monitor</strong>: RF capture of raw 802.11 frames on a channel without associating to an AP.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Placing the Adapter in Monitor Mode (Lab)</h2>
+    <p>Kali Linux provides several utilities. Interfaces and names vary by driver (e.g., <span class="kbd">wlan0</span>, <span class="kbd">wlan1</span>, <span class="kbd">wlan0mon</span>).</p>
+    <h3>List wireless interfaces</h3>
+    <pre>$ iwconfig      # shows wireless interfaces only
+$ ip addr       # modern replacement for ifconfig (all interfaces)</pre>
+
+    <h3>Switch to monitor mode (driver-dependent)</h3>
+    <p><strong>Approach A — with <span class="kbd">iw</span> tools (modern)</strong></p>
+    <pre>$ ip link set wlan0 down
+$ iw dev wlan0 set type monitor
+$ ip link set wlan0 up</pre>
+
+    <p><strong>Approach B — with helper tools (creates e.g., wlan0mon)</strong></p>
+    <pre>$ airmon-ng check kill    # stop interfering processes (optional in some labs)
+$ airmon-ng start wlan0    # creates a monitor-mode interface</pre>
+
+    <p><strong>Verify mode/channel</strong></p>
+    <pre>$ iw dev           # confirm type: monitor, and current channel
+$ iwconfig          # legacy view; look for “Mode:Monitor”</pre>
+
+    <div class="note">ℹ️ The loopback interface is <strong>lo</strong>. If you’re running in a VM, ensure the USB Wi-Fi adapter is attached to the VM and drivers are loaded (<span class="kbd">lsusb</span>, <span class="kbd">dmesg | tail</span>).</div>
+  </section>
+
+  <section>
+    <h2>Sniffing in Practice (Defensive/Analytical)</h2>
+    <p>In a permitted lab, capture and analyze traffic to understand baselines and detect anomalies.</p>
+    <ul>
+      <li><strong>Channel selection</strong>: Monitor mode is channel-specific. Choose the AP’s primary channel or use tools that perform channel hopping in a controlled way.</li>
+      <li><strong>Tools</strong>: Wireshark (GUI dissector), tcpdump (CLI), Kismet (WIDS/wireless survey), vendor AP logs.</li>
+      <li><strong>Filters</strong> (for analysis):
+        <ul>
+          <li>Wireshark display filters: <span class="kbd">wlan.fc.type_subtype == 0x08</span> (beacons), <span class="kbd">wlan.ssid</span>, <span class="kbd">wlan.ta</span>/<span class="kbd">wlan.da</span></li>
+          <li>tcpdump capture filters (BPF): e.g., management frames depend on driver support; many labs filter by channel and later dissect in Wireshark.</li>
+        </ul>
+      </li>
+      <li><strong>Decrypting your own lab WPA2 traffic</strong>: If you know the pre-shared key, you can configure Wireshark to decrypt (Preferences → Protocols → IEEE 802.11 → enable decryption; add your SSID/PSK). Use only for your lab.</li>
+      <li><strong>Metadata to watch</strong>: RSSI, data rates, retry flags, unexpected BSSIDs/SSIDs, sudden spikes in probes/deauths (can indicate misconfiguration or interference).</li>
+    </ul>
+    <div class="example">
+      <strong>Lab exercise idea (defensive):</strong> Record one hour of beacons/probe requests in your lab, build a baseline of expected BSSIDs/SSIDs/channels, and alert on any new SSID with your brand name on a different BSSID/channel (possible rogue/evil-twin attempt).
+    </div>
+  </section>
+
+  <section>
+    <h2>Troubleshooting & Environment Hygiene</h2>
+    <ul>
+      <li><strong>Drivers</strong>: Ensure your chipset supports monitor mode (and packet injection if required for specific lab simulations).</li>
+      <li><strong>rfkill</strong>: Check soft/hard blocks if the radio won’t enable: <span class="kbd">rfkill list</span>, <span class="kbd">rfkill unblock all</span>.</li>
+      <li><strong>Regulatory domain</strong>: Set a proper country code for channel availability: <span class="kbd">iw reg set US</span> (replace with yours).</li>
+      <li><strong>Conflicting services</strong>: Network managers can pull interfaces out of monitor mode. Temporarily stop them only for tests; restore afterwards.</li>
+      <li><strong>PCAP management</strong>: Use ring buffers / time splits for long captures to avoid huge files; annotate capture context (channel, AP, time).</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Security Perspective</h2>
+    <ul>
+      <li><strong>Before connection</strong>: Understand broadcast management traffic (beacons/probes). Educate users to avoid auto-joining look-alike SSIDs.</li>
+      <li><strong>During connection</strong>: Prefer WPA2/WPA3, enforce HTTPS/HSTS and secure DNS. Segment networks; apply switch protections (Dynamic ARP Inspection, DHCP Snooping) on wired edges.</li>
+      <li><strong>Detection</strong>: WIDS/WIPS, centralized logs, and anomaly baselines help spot rogue APs, unusual SSIDs, or abnormal frame rates.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Conclusion</h2>
+    <p>Monitor mode enables RF visibility for authorized diagnostics and defense. By learning how frames look on the air, you’ll build a strong foundation for wireless security: baselining, detecting anomalies, and validating hardening measures—all within a lawful, controlled lab.</p>
+  </section>
+
+  <!-- Update these links to your site structure -->
+  <a href="https://e2yeong.github.io/CyberSecurity-Lab/Network/Network2/Network3/Network4/Network5"><p class="Link">Back</p></a>
+  <a href="https://e2yeong.github.io/CyberSecurity-Lab/Network/Network2/Network3/Network4/Network5/Network6/Network7"><p class="Link">Next</p></a>
+</body>
+</html>
