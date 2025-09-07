@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>🔐 Hasher Demo | SHA-256 & Argon2id</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #0f1220;
+      --fg: #f3f6ff;
+      --muted: #9aa3b2;
+      --card: #181c2f;
+      --accent: #7aa2f7;
+      --border: #2a3150;
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: radial-gradient(1200px 600px at 10% 0%, #121631 0%, var(--bg) 50%);
+      color: var(--fg);
+    }
+    .container { max-width: 860px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { font-size: 2rem; margin-bottom: .5rem; }
+    h1 small { font-size: 1rem; color: var(--muted); }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+    label { display:block; font-size:.9rem; color:var(--muted); margin-bottom:.3rem; }
+    textarea, input, select {
+      width: 100%;
+      padding: .6rem .7rem;
+      border: 1px solid var(--border);
+      background: #0e1226;
+      color: var(--fg);
+      border-radius: .6rem;
+    }
+    button {
+      padding: .7rem 1rem;
+      border-radius: .6rem;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, #1b2342, #0f1636);
+      color: var(--fg);
+      cursor: pointer;
+    }
+    button:hover { background: var(--accent); color:#fff; }
+    .row { display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.5rem; }
+    .row > div { flex:1; min-width:140px; }
+    pre {
+      background:#0b0f24;
+      border:1px dashed var(--border);
+      border-radius:.6rem;
+      padding:.8rem;
+      white-space:pre-wrap;
+      word-break:break-all;
+      min-height:50px;
+    }
+    footer { text-align:center; margin:2rem 0; color:var(--muted); }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>🔐 Hasher Demo <small>SHA-256 & Argon2id</small></h1>
+    <p style="color:var(--muted)">For learning/demo only. Not for production authentication.</p>
+
+    <div class="card">
+      <label>Input Text</label>
+      <textarea id="text" rows="3" placeholder="Type text to hash..."></textarea>
+      <div class="row">
+        <div>
+          <label>Mode</label>
+          <select id="mode">
+            <option value="sha256">SHA-256</option>
+            <option value="argon2id">Argon2id</option>
+          </select>
+        </div>
+        <div><button id="runBtn">Hash ▶</button></div>
+      </div>
+    </div>
+
+    <div id="argon2Opts" class="card" style="display:none">
+      <h3>Argon2id Parameters</h3>
+      <div class="row">
+        <div><label>Salt</label><input id="salt" value="demo_salt"></div>
+        <div><label>timeCost</label><input id="timeCost" type="number" value="2" min="1"></div>
+        <div><label>memCost (KB)</label><input id="memCost" type="number" value="65536" step="1024"></div>
+        <div><label>parallelism</label><input id="parallelism" type="number" value="1" min="1"></div>
+        <div><label>hashLen</label><input id="hashLen" type="number" value="32" min="16"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Result</h3>
+      <pre id="output">—</pre>
+      <div class="row">
+        <button id="copyBtn">Copy</button>
+        <button id="clearBtn">Clear</button>
+      </div>
+    </div>
+
+    <footer>Made with ❤️ using Web Crypto & Argon2 WASM</footer>
+  </main>
+
+  <!-- SHA-256 -->
+  <script>
+    async function sha256Hex(msg) {
+      const buf = new TextEncoder().encode(msg);
+      const hash = await crypto.subtle.digest("SHA-256", buf);
+      return Array.from(new Uint8Array(hash))
+        .map(b => b.toString(16).padStart(2,"0"))
+        .join("");
+    }
+  </script>
+
+  <!-- Argon2 Browser (WASM) -->
+  <script src="https://cdn.jsdelivr.net/npm/argon2-browser@1.19.0/dist/argon2-bundled.min.js"></script>
+
+  <script>
+    const modeSel = document.getElementById("mode");
+    const argonOpts = document.getElementById("argon2Opts");
+    const out = document.getElementById("output");
+    const txt = document.getElementById("text");
+
+    function toggleOpts(){ argonOpts.style.display = modeSel.value==="argon2id" ? "" : "none"; }
+    modeSel.addEventListener("change", toggleOpts);
+    toggleOpts();
+
+    document.getElementById("runBtn").addEventListener("click", async () => {
+      const input = txt.value;
+      if(!input){ out.textContent="⚠️ No input"; return; }
+      out.textContent="Hashing...";
+
+      if(modeSel.value==="sha256"){
+        out.textContent = await sha256Hex(input);
+      } else {
+        const opts = {
+          pass: input,
+          salt: document.getElementById("salt").value || "demo_salt",
+          time: parseInt(document.getElementById("timeCost").value),
+          mem: parseInt(document.getElementById("memCost").value),
+          parallelism: parseInt(document.getElementById("parallelism").value),
+          hashLen: parseInt(document.getElementById("hashLen").value),
+          type: argon2.ArgonType.Argon2id
+        };
+        try {
+          const res = await argon2.hash(opts);
+          out.textContent = res.encoded + "\n\nParams: " + JSON.stringify(opts, null, 2);
+        } catch(e){
+          out.textContent="Error: "+e.message;
+        }
+      }
+    });
+
+    document.getElementById("copyBtn").addEventListener("click", async ()=>{
+      try{ await navigator.clipboard.writeText(out.textContent); }catch(_){}
+    });
+    document.getElementById("clearBtn").addEventListener("click", ()=>{
+      txt.value=""; out.textContent="—";
+    });
+  </script>
+</body>
+</html>
