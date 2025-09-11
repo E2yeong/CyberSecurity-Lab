@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Symmetric Encryption & AES — Study Notes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    body { font-family:'Inter',sans-serif; background:#f8f9fa; color:#222; margin:0; line-height:1.7 }
+    header { background:#2c3e50; color:white; text-align:center; padding:1.5rem }
+    main { max-width:1100px; margin:2rem auto; padding:0 1rem }
+    section { background:#fff; border:1px solid #e6e9ef; border-radius:12px; padding:1.6rem; margin-bottom:1.2rem; box-shadow:0 6px 14px rgba(0,0,0,.05) }
+    h1,h2,h3 { margin-top:0; color:#2c3e50 }
+    h2 { border-bottom:2px solid #f0f2f5; padding-bottom:.4rem }
+    code { background:#f1f3f5; padding:.1rem .35rem; border-radius:4px }
+    .note { background:#fff8e1; border-left:4px solid #ffcc00; padding:1rem; margin:1rem 0; border-radius:8px }
+    .info { background:#eef7ff; border-left:4px solid #3498db; padding:1rem; margin:1rem 0; border-radius:8px }
+    ul { margin:.3rem 0 .3rem 1rem }
+    li { margin:.3rem 0 }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🔐 Symmetric Encryption & AES</h1>
+    <p>Comprehensive study notes — concepts, structure, security, and modern challenges</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>1. Introduction</h2>
+      <p>Almost every Internet service — from messaging and e-commerce to online banking — relies on <strong>encryption</strong>. 
+      The most widely used form is <em>symmetric key encryption</em>, where both sender and receiver share the same secret key. 
+      Among symmetric algorithms, <strong>AES (Advanced Encryption Standard)</strong> has been the global standard since 2001, used by governments, corporations, and individuals alike.</p>
+    </section>
+
+    <section>
+      <h2>2. Fundamentals of Symmetric Encryption</h2>
+      <h3>Definition</h3>
+      <p>
+        Encryption: <code>Plaintext + Key → Ciphertext</code><br/>
+        Decryption: <code>Ciphertext + Key → Plaintext</code>
+      </p>
+      <p><em>Analogy:</em> like sharing a physical key — both parties can lock and unlock the same door.</p>
+
+      <h3>Strengths</h3>
+      <ul>
+        <li><strong>Efficiency:</strong> Processes large data quickly, suitable for real-time communication.</li>
+        <li><strong>Simplicity:</strong> Lightweight to implement, minimal overhead on networks.</li>
+      </ul>
+
+      <h3>Weaknesses</h3>
+      <ul>
+        <li><strong>Key distribution:</strong> How to securely share the secret key?</li>
+        <li><strong>Key management:</strong> With many users, required keys scale rapidly (\(O(n^2)\)).</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>3. AES: Advanced Encryption Standard</h2>
+      <h3>Overview</h3>
+      <ul>
+        <li>Adopted as U.S. NIST standard in 2001 (FIPS 197).</li>
+        <li>Block size: 128 bits.</li>
+        <li>Key sizes: 128, 192, or 256 bits (10, 12, or 14 rounds).</li>
+      </ul>
+
+      <h3>Round Structure</h3>
+      <ol>
+        <li><strong>SubBytes:</strong> non-linear substitution using an S-box.</li>
+        <li><strong>ShiftRows:</strong> cyclic shift of rows for diffusion.</li>
+        <li><strong>MixColumns:</strong> mixes bytes within columns using matrix multiplication.</li>
+        <li><strong>AddRoundKey:</strong> combines state with round key via XOR.</li>
+      </ol>
+
+      <div class="info">These repeated transformations create strong <em>confusion</em> and <em>diffusion</em>, ensuring ciphertext reveals no pattern of plaintext.</div>
+    </section>
+
+    <section>
+      <h2>4. Security Considerations</h2>
+      <ul>
+        <li><strong>Key management:</strong> Never transmit raw keys via email or chat. Use secure key exchange protocols (Diffie–Hellman, RSA, ECDH).</li>
+        <li><strong>Mode of operation:</strong> Avoid ECB (patterns leak). Prefer CBC with random IVs or authenticated modes like GCM.</li>
+        <li><strong>Key length:</strong> AES-128 is secure, but AES-256 is recommended for long-term sensitive data.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>5. Symmetric vs Asymmetric Keys</h2>
+      <p>The major challenge of symmetric encryption is <strong>key distribution</strong>. This is solved by combining it with <em>asymmetric (public-key) cryptography</em>.</p>
+      <div class="note">
+        Example — <strong>TLS/SSL:</strong><br/>
+        Step 1: Browser ↔ server exchange a session key using public-key cryptography (RSA, ECDHE).<br/>
+        Step 2: All further communication encrypted with AES for speed and security.
+      </div>
+    </section>
+
+    <section>
+      <h2>6. Modes of Operation</h2>
+      <ul>
+        <li><strong>ECB (Electronic Codebook):</strong> Identical blocks → identical ciphertext (insecure).</li>
+        <li><strong>CBC (Cipher Block Chaining):</strong> Each block XORed with previous ciphertext; breaks patterns.</li>
+        <li><strong>GCM (Galois/Counter Mode):</strong> Provides both confidentiality and integrity (encryption + authentication).</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>7. AES in the Quantum Era</h2>
+      <p>Quantum computing (via Grover’s algorithm) reduces brute-force search complexity:</p>
+      <ul>
+        <li>AES-128 → ~64-bit effective security.</li>
+        <li>AES-256 → ~128-bit effective security (still robust).</li>
+      </ul>
+      <p><strong>Implication:</strong> For future-proofing, AES-256 is strongly recommended.</p>
+    </section>
+
+    <section>
+      <h2>8. Conclusion</h2>
+      <p>AES is not just a “fast cipher” — it is the backbone of global digital security. 
+      But its safety depends on correct <strong>key management</strong>, <strong>secure modes of operation</strong>, and <strong>integration with public-key methods</strong>. 
+      With quantum threats looming, migrating toward AES-256 is a prudent step in ensuring long-term security.</p>
+    </section>
+
+    <section>
+      <h2>📚 References</h2>
+      <ul>
+        <li>Stallings, W. (2017). <em>Cryptography and Network Security</em>.</li>
+        <li>NIST (2001). <em>FIPS PUB 197: Advanced Encryption Standard</em>.</li>
+        <li>Ferguson, Schneier & Kohno (2010). <em>Cryptography Engineering</em>.</li>
+        <li>NIST (2001). <em>SP 800-38A: Recommendation for Block Cipher Modes</em>.</li>
+        <li>Mosca, M. (2018). <em>Cybersecurity in an Era with Quantum Computers</em>.</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>
