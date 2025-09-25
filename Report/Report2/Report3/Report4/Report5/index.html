@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SSL/TLS & HTTPS — The Backbone of Internet Security</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  <style>
+    :root{
+      --bg:#f8f9fb; --fg:#1f2937; --muted:#6b7280; --brand:#1d3557; --accent:#2563eb;
+      --card:#ffffff; --border:#e5e7eb; --info:#eef7ff; --info-b:#cfe4ff; --note:#fff7e6; --note-b:#ffd591;
+      --ok:#e8f7ef; --ok-b:#bfe9d1; --bad:#ffe8e8; --bad-b:#ffbcbc;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--fg);background:var(--bg);line-height:1.7}
+    header{background:var(--brand);color:#fff;padding:1.8rem 1rem;text-align:center}
+    header h1{margin:0 0 .3rem;font-size:1.7rem}
+    header p{margin:0;opacity:.9}
+    main{max-width:1100px;margin:2rem auto;padding:0 1rem}
+    nav.toc{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 6px 14px rgba(0,0,0,.06);padding:1.2rem;margin-bottom:1.25rem}
+    nav.toc a{color:var(--accent);text-decoration:none}
+    nav.toc a:hover{text-decoration:underline}
+    section{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 6px 14px rgba(0,0,0,.06);padding:1.4rem 1.2rem;margin-bottom:1.25rem}
+    h2{margin:0 0 .9rem;color:var(--brand);border-bottom:2px solid #f0f2f5;padding-bottom:.45rem;font-size:1.28rem}
+    h3{margin:1rem 0 .4rem;color:#2f3e56}
+    h4{margin:.7rem 0 .2rem;color:#334155}
+    p,li{margin:.45rem 0}
+    ul{padding-left:1.25rem}
+    code, kbd{background:#f3f4f6;border:1px solid var(--border);border-radius:6px;padding:.1rem .35rem}
+    pre{background:#f6f8fb;border:1px solid var(--border);border-radius:10px;padding:.8rem 1rem;overflow:auto}
+    .info{background:var(--info);border:1px solid var(--info-b);border-left:4px solid #1e6ad6;padding:.8rem 1rem;border-radius:10px;margin:1rem 0}
+    .note{background:var(--note);border:1px solid var(--note-b);border-left:4px solid #f59e0b;padding:.8rem 1rem;border-radius:10px;margin:1rem 0}
+    .ok{background:var(--ok);border:1px solid var(--ok-b);border-left:4px solid #22a06b;padding:.8rem 1rem;border-radius:10px;margin:1rem 0}
+    .bad{background:var(--bad);border:1px solid var(--bad-b);border-left:4px solid #ef4444;padding:.8rem 1rem;border-radius:10px;margin:1rem 0}
+    .grid{display:grid;gap:1rem}
+    @media(min-width:960px){ .two{grid-template-columns:1fr 1fr} .three{grid-template-columns:1fr 1fr 1fr} }
+    table{width:100%;border-collapse:collapse;margin:.6rem 0}
+    th,td{border:1px solid var(--border);padding:.55rem .6rem;text-align:left}
+    th{background:#f6f7f9}
+    .pill{display:inline-block;padding:.05rem .5rem;border-radius:999px;border:1px solid var(--border);background:#f3f4f6;font-size:.8rem;color:#374151}
+    .kbd{background:#111827;color:#fff;border-radius:6px;padding:.12rem .35rem;font-family:ui-monospace,Consolas,monospace}
+    a{color:var(--accent);text-decoration:none}
+    a:hover{text-decoration:underline}
+     .meta {
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 1rem;
+      font-style: italic;
+    }
+    .Link {
+      display: inline-block;
+      margin-bottom: 1.5rem;
+      padding: 0.6rem 1.2rem;
+      background: #3498db;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      margin-left: 50%;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SSL/TLS & HTTPS — The Backbone of Internet Security</h1>
+    <p>Confidentiality · Integrity · Authentication · TLS 1.3 · Certificates · Best Practices · PQC</p>
+  </header>
+  <main>
+    <nav class="toc">
+      <strong>Contents</strong>
+      <ol>
+        <li><a href="#why">Why HTTPS?</a></li>
+        <li><a href="#cia">TLS Core Objectives (CIA)</a></li>
+        <li><a href="#handshake">TLS Handshake: 1.2 vs 1.3</a></li>
+        <li><a href="#pki">Certificates (X.509) & the Chain of Trust</a></li>
+        <li><a href="#hybrid">Hybrid Crypto: Asymmetric + Symmetric</a></li>
+        <li><a href="#config">Modern Cipher Suites & Server Config</a></li>
+        <li><a href="#resumption">Session Resumption, 0-RTT, ALPN, HTTP/2/3</a></li>
+        <li><a href="#browser">Browser Security: HSTS, Mixed Content, Errors</a></li>
+        <li><a href="#threats">Historic Attacks & What to Avoid</a></li>
+        <li><a href="#pqc">Post-Quantum Era & Migration</a></li>
+        <li><a href="#checklist">Deployment Checklist & Testing</a></li>
+        <li><a href="#refs">References & Further Reading</a></li>
+      </ol>
+    </nav>
+
+    <section id="why">
+           <a href="https://blog.naver.com/ddak_sound/224021718469"><p class="meta">Originally posted on 2024.9.25 (Naver Blog)</p></a>
+      <h2>1) Why HTTPS?</h2>
+      <p>HTTP sends data in <em>plaintext</em> — like mailing a postcard: anyone on the path can read or alter it. <strong>TLS (Transport Layer Security)</strong> wraps HTTP with encryption and integrity, creating <strong>HTTPS = HTTP + TLS</strong>.</p>
+      <div class="info">
+        <strong>Analogy:</strong> HTTP is an open postcard. HTTPS is a sealed, tamper-evident envelope with a verified return address (digital signature). Eavesdroppers can see you sent a letter (metadata), but can’t read or alter the contents.
+      </div>
+    </section>
+
+    <section id="cia">
+      <h2>2) TLS Core Objectives (CIA)</h2>
+      <div class="grid three">
+        <div>
+          <h3>Confidentiality</h3>
+          <p>Data is encrypted in transit so observers can’t read it.</p>
+          <p class="pill">AEAD: AES-GCM, ChaCha20-Poly1305</p>
+        </div>
+        <div>
+          <h3>Integrity</h3>
+          <p>Detects modification. AEAD modes authenticate ciphertext and associated data.</p>
+          <p class="pill">GCM/Poly1305 tags</p>
+        </div>
+        <div>
+          <h3>Authentication</h3>
+          <p>Verifies the peer’s identity via <strong>X.509 certificates</strong> and PKI signatures (CAs).</p>
+          <p class="pill">Server auth; optional client auth (mTLS)</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="handshake">
+      <h2>3) TLS Handshake: 1.2 vs 1.3</h2>
+      <h3>High-level flow</h3>
+      <div class="grid two">
+        <div>
+          <h4>TLS 1.2 (legacy, still seen)</h4>
+          <ol>
+            <li><strong>ClientHello</strong>: versions, cipher suites, extensions.</li>
+            <li><strong>ServerHello</strong>: choice + <strong>Certificate</strong>.</li>
+            <li><strong>Key exchange</strong>: RSA or (EC)DHE (PFS if *DHE*).</li>
+            <li><strong>Finished</strong>: switch to symmetric encryption.</li>
+          </ol>
+          <div class="note">Use (EC)DHE to get <em>Perfect Forward Secrecy (PFS)</em>. Avoid static RSA key exchange.</div>
+        </div>
+        <div>
+          <h4>TLS 1.3 (modern default)</h4>
+          <ul>
+            <li>Fewer round trips (1-RTT), faster connects.</li>
+            <li>Removes RSA key exchange → <strong>only (EC)DHE</strong> (PFS by default).</li>
+            <li>Only strong AEAD ciphers (AES-GCM, ChaCha20-Poly1305).</li>
+            <li>Optional <strong>0-RTT</strong> for session resumption (replay-risk aware).</li>
+          </ul>
+          <div class="ok"><strong>Result:</strong> simpler, faster, and more secure defaults.</div>
+        </div>
+      </div>
+      <h3>Key extensions you’ll encounter</h3>
+      <ul>
+        <li><strong>SNI</strong> (Server Name Indication): host selection on shared IPs.</li>
+        <li><strong>ALPN</strong>: picks HTTP/1.1 vs HTTP/2 vs HTTP/3.</li>
+        <li><strong>OCSP stapling</strong>: server staples revocation proof to cut latency/trust gaps.</li>
+        <li><strong>ECH</strong> (Encrypted ClientHello, emerging): hides SNI from on-path observers.</li>
+      </ul>
+    </section>
+
+    <section id="pki">
+      <h2>4) Certificates (X.509) & the Chain of Trust</h2>
+      <p>The server presents a certificate (“this public key belongs to <em>example.com</em>”) signed by a <strong>Certificate Authority (CA)</strong>.</p>
+      <div class="grid two">
+        <div>
+          <h3>What’s inside a cert?</h3>
+          <ul>
+            <li>Subject (domain), <strong>SAN</strong> (Subject Alternative Names)</li>
+            <li>Public key (RSA/ECDSA), validity period</li>
+            <li>Issuer (CA), signature, key usage/extKeyUsage</li>
+          </ul>
+          <div class="note">SAN is authoritative for domain binding (CN alone is deprecated).</div>
+        </div>
+        <div>
+          <h3>Trust chain</h3>
+          <ol>
+            <li>Server cert → intermediate CA → <strong>root CA</strong></li>
+            <li>Browser/OS trusts the root store</li>
+            <li>Validation: chain building, signature checks, hostname match, validity window</li>
+          </ol>
+        </div>
+      </div>
+      <h3>Revocation & CT</h3>
+      <ul>
+        <li><strong>OCSP/CRL:</strong> revocation is imperfect (latency/reliability). OCSP stapling helps.</li>
+        <li><strong>Certificate Transparency (CT) logs:</strong> browsers expect SCTs (proof of public logging).</li>
+      </ul>
+      <h3>Operational notes</h3>
+      <ul>
+        <li>Use automated issuance/renewal (e.g., ACME / Let’s Encrypt). Rotate keys on schedule.</li>
+        <li>Prefer <strong>ECDSA</strong> (P-256) or RSA-2048+ (RSA-3072 recommended for long-life).</li>
+        <li>Wildcard + SANs when appropriate; ensure proper key usage flags.</li>
+      </ul>
+    </section>
+
+    <section id="hybrid">
+      <h2>5) Hybrid Crypto: Asymmetric + Symmetric</h2>
+      <p>TLS uses <strong>asymmetric crypto</strong> (RSA/ECDSA for signatures, (EC)DHE for key agreement) to securely establish a <strong>symmetric session key</strong> (AES-GCM/ChaCha-Poly). This blends “secure but slow” with “fast at scale.”</p>
+      <div class="ok">
+        <strong>Perfect Forward Secrecy (PFS):</strong> Compromise of the server’s long-term key does <em>not</em> decrypt past sessions because each session’s ephemeral (EC)DH key was unique and discarded.
+      </div>
+    </section>
+
+    <section id="config">
+      <h2>6) Modern Cipher Suites & Server Config</h2>
+      <div class="grid two">
+        <div>
+          <h3>Recommended (TLS 1.3)</h3>
+          <ul>
+            <li><code>TLS_AES_128_GCM_SHA256</code></li>
+            <li><code>TLS_AES_256_GCM_SHA384</code></li>
+            <li><code>TLS_CHACHA20_POLY1305_SHA256</code> (great on mobile/CPU-constrained)</li>
+          </ul>
+          <p>Curves: <strong>X25519</strong>, P-256</p>
+        </div>
+        <div>
+          <h3>Recommended (TLS 1.2, if needed)</h3>
+          <ul>
+            <li>ECDHE + ECDSA/RSA with <strong>AES-GCM</strong> or <strong>CHACHA20-POLY1305</strong></li>
+            <li>Disable CBC, RC4, 3DES</li>
+          </ul>
+          <p>Enable <strong>OCSP stapling</strong>, secure renegotiation, HSTS.</p>
+        </div>
+      </div>
+      <div class="bad">
+        <strong>Disable:</strong> SSLv2/3, TLS 1.0/1.1, export ciphers, NULL/anon suites, static RSA key exchange, RC4, 3DES, weak DH (< 2048-bit).
+      </div>
+      <h3>Example policy ideas (pseudocode)</h3>
+<pre># Pseudo-directives (web server / proxy conceptually)
+tls_min_version = 1.3
+tls_ciphers_13 = TLS_AES_128_GCM_SHA256:TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256
+# If 1.2 is required:
+tls_min_version = 1.2
+tls_ciphers_12 = ECDHE+AESGCM:ECDHE+CHACHA20 !CBC !RC4 !3DES
+curves = X25519:P-256
+ocsp_stapling = on
+hsts = max-age=31536000; includeSubDomains; preload
+alpn = h2; http/1.1
+</pre>
+      <div class="note">Exact syntax differs by Nginx/Apache/Envoy/Caddy; use each vendor’s modern TLS guide.</div>
+    </section>
+
+    <section id="resumption">
+      <h2>7) Session Resumption, 0-RTT, ALPN, HTTP/2/3</h2>
+      <ul>
+        <li><strong>Resumption</strong>: Tickets (1.3) or session IDs (1.2) speed reconnects; rotate ticket keys regularly.</li>
+        <li><strong>0-RTT (TLS 1.3)</strong>: Enables early data on resumption but <em>replayable</em>. Only allow for idempotent requests and with rate-limiting.</li>
+        <li><strong>ALPN</strong>: Negotiates HTTP/2 or HTTP/3 (QUIC uses TLS 1.3).</li>
+        <li><strong>HTTP/2</strong>: Requires strong ciphers and ALPN; parallelism over one connection.</li>
+        <li><strong>HTTP/3</strong>: Runs over QUIC (UDP) with TLS 1.3 integrated; faster handshakes, better loss recovery.</li>
+      </ul>
+    </section>
+
+    <section id="browser">
+      <h2>8) Browser Security: HSTS, Mixed Content, Errors</h2>
+      <div class="grid two">
+        <div>
+          <h3>HSTS</h3>
+          <ul>
+            <li><strong>HTTP Strict Transport Security</strong> forces HTTPS and guards against SSL-strip.</li>
+            <li><code>Strict-Transport-Security: max-age=31536000; includeSubDomains; preload</code></li>
+            <li>Submit to the preload list only after verifying all subdomains support HTTPS.</li>
+          </ul>
+          <h3>Mixed Content</h3>
+          <ul>
+            <li>HTTPS pages must not load HTTP subresources.</li>
+            <li>Upgrade or block mixed content (scripts, images, iframes).</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Certificate Errors</h3>
+          <ul>
+            <li>Expired cert, hostname mismatch, untrusted issuer → hard failures.</li>
+            <li>Revocation: OCSP stapling and short-lived certs mitigate gaps.</li>
+            <li>mTLS: client certificates for B2B, APIs, or admin portals.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="threats">
+      <h2>9) Historic Attacks & What to Avoid</h2>
+      <div class="grid two">
+        <div>
+          <h3>Notorious issues</h3>
+          <ul>
+            <li><strong>BEAST/CRIME/BREACH</strong>: compression & CBC pitfalls → use TLS 1.3/AEAD, disable TLS-level compression.</li>
+            <li><strong>POODLE</strong>: SSLv3 CBC flaw → disable SSLv3 and old TLS.</li>
+            <li><strong>Heartbleed</strong>: OpenSSL memory leak → patch promptly; rotate secrets.</li>
+            <li><strong>ROBOT</strong>: old RSA padding oracles → avoid legacy RSA key exchange; use TLS 1.3.</li>
+            <li><strong>Logjam/DROWN/SWEET32/RC4</strong>: export/weak DH, SSLv2 bridging, 64-bit block ciphers → enforce strong params, disable legacy suites.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Operational mistakes</h3>
+          <ul>
+            <li>Weak DH groups (< 2048-bit) or static params reused for years.</li>
+            <li>Forgotten subdomains without HTTPS breaking HSTS preload.</li>
+            <li>Long-lived keys without rotation or poor randomness (non-CSPRNG).</li>
+            <li>Ignoring mixed content or certificate transparency expectations.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="pqc">
+      <h2>10) Post-Quantum Era & Migration</h2>
+      <p><strong>Shor’s algorithm</strong> breaks RSA and ECC; <strong>Grover’s algorithm</strong> roughly halves symmetric security (AES-128 ≈ 64-bit strength).</p>
+      <h3>Migration path</h3>
+      <ul>
+        <li><strong>Symmetric:</strong> prefer <strong>AES-256-GCM</strong> (or ChaCha20-Poly1305) for long-term confidentiality.</li>
+        <li><strong>Key exchange/signatures:</strong> adopt <strong>PQC</strong> (e.g., Kyber for KEM; Dilithium/SPHINCS+ for signatures) as standards land in mainstream TLS stacks.</li>
+        <li><strong>Hybrid KEX:</strong> X25519 + Kyber (or P-256 + Kyber) to hedge risk during transition.</li>
+        <li>Inventory your crypto, define a policy for PQC rollout, and test interop carefully.</li>
+      </ul>
+      <div class="note">HTTP/3 + TLS 1.3 stacks are already experimenting with hybrid key exchanges. Expect ecosystem updates in libraries, HSMs, and browsers.</div>
+    </section>
+
+    <section id="checklist">
+      <h2>11) Deployment Checklist & Testing</h2>
+      <div class="grid two">
+        <div>
+          <h3>Server-side</h3>
+          <ul>
+            <li>TLS 1.3 enabled; TLS 1.2 only if required (hardened).</li>
+            <li>Strong cipher suites (AEAD), PFS, <strong>X25519</strong> curve first.</li>
+            <li>OCSP stapling, short-lived certs, automated renewal (ACME).</li>
+            <li>HSTS (+ preload after verification), no mixed content.</li>
+            <li>Session ticket key rotation; cautious 0-RTT policy.</li>
+            <li>Disable SSLv2/3, TLS 1.0/1.1, export/NULL/RC4/3DES, weak DH.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Client/Browser</h3>
+          <ul>
+            <li>Validate hostnames; SAN-based matching.</li>
+            <li>Respect CT policies; show clear errors for trust failures.</li>
+            <li>Prefer ECH (when available) and ALPN negotiation.</li>
+          </ul>
+          <h3>Testing</h3>
+          <ul>
+            <li>Use comprehensive TLS testers (protocols, ciphers, HSTS, OCSP).</li>
+            <li>Pen-test for downgrade, replay (0-RTT), and mixed-content issues.</li>
+            <li>Monitor cert expiry & issuance (CT log alerts).</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="refs">
+      <h2>12) References & Further Reading</h2>
+      <ul>
+        <li>RFC 8446 — TLS 1.3</li>
+        <li>RFC 5280 — Internet X.509 PKI Certificate and CRL Profile</li>
+        <li>NIST SP 800-52 Rev.2 — TLS Guidelines</li>
+        <li>NIST Post-Quantum Cryptography Project</li>
+        <li>Stallings, <em>Cryptography and Network Security</em></li>
+        <li>Ferguson, Schneier, Kohno, <em>Cryptography Engineering</em></li>
+      </ul>
+      <div class="ok">
+        <strong>Summary:</strong> HTTPS isn’t just a padlock icon. It’s a layered system that blends modern cryptography,
+        global PKI, careful server/browser policies, and ongoing maintenance to deliver confidentiality, integrity, and authentication today —
+        with a roadmap toward post-quantum safety tomorrow.
+      </div>
+    </section>
+  </main>
+   <a href="https://e2yeong.github.io/CyberSecurity-Lab/Report/Report2/Report3/Report4"><p class="Link">Back</p></a>
+<a href="https://e2yeong.github.io/CyberSecurity-Lab/Report/Report2/Report3/Report4/Report5/Report6"><p class="Link">Next</p></a>
+</body>
+</html>
