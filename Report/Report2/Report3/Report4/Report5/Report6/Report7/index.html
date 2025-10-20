@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Network & Security — From Fundamentals to Defense</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+ --bg:#f8f9fb; --fg:#1f2937; --muted:#6b7280; --brand:#1d3557; --accent:#2563eb;
+ --card:#ffffff; --border:#e5e7eb; --info:#eef7ff; --info-b:#cfe4ff;
+ --note:#fff7e6; --note-b:#ffd591; --ok:#e8f7ef; --ok-b:#bfe9d1; --bad:#ffe8e8; --bad-b:#ffbcbc;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--fg);background:var(--bg);line-height:1.7}
+header{background:var(--brand);color:#fff;padding:1.8rem 1rem;text-align:center}
+header h1{margin:0 0 .3rem;font-size:1.7rem}
+header p{margin:0;opacity:.9}
+main{max-width:1100px;margin:2rem auto;padding:0 1rem}
+nav.toc{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 6px 14px rgba(0,0,0,.06);padding:1.2rem;margin-bottom:1.25rem}
+nav.toc a{color:var(--accent);text-decoration:none}
+nav.toc a:hover{text-decoration:underline}
+section{background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 6px 14px rgba(0,0,0,.06);padding:1.4rem 1.2rem;margin-bottom:1.25rem}
+h2{margin:0 0 .9rem;color:var(--brand);border-bottom:2px solid #f0f2f5;padding-bottom:.45rem;font-size:1.28rem}
+h3{margin:1rem 0 .4rem;color:#2f3e56}
+h4{margin:.7rem 0 .2rem;color:#334155}
+ul{padding-left:1.25rem}
+code{background:#f3f4f6;border:1px solid var(--border);border-radius:6px;padding:.1rem .35rem}
+.info,.note,.ok,.bad{border-radius:10px;padding:.8rem 1rem;margin:1rem 0}
+.info{background:var(--info);border:1px solid var(--info-b);border-left:4px solid #1e6ad6}
+.note{background:var(--note);border:1px solid var(--note-b);border-left:4px solid #f59e0b}
+.ok{background:var(--ok);border:1px solid var(--ok-b);border-left:4px solid #22a06b}
+.bad{background:var(--bad);border:1px solid var(--bad-b);border-left:4px solid #ef4444}
+.grid{display:grid;gap:1rem}
+@media(min-width:960px){.two{grid-template-columns:1fr 1fr}.three{grid-template-columns:1fr 1fr 1fr}}
+table{width:100%;border-collapse:collapse;margin:.6rem 0}
+th,td{border:1px solid var(--border);padding:.55rem .6rem;text-align:left}
+th{background:#f6f7f9}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<header>
+  <h1>🌐 Network & Security — From Fundamentals to Defense</h1>
+  <p>Topology · OSI/TCP-IP Models · Protocols · Performance Metrics · CIA Triad · Threats · Defense Layers</p>
+</header>
+
+<main>
+<nav class="toc">
+<strong>Contents</strong>
+<ol>
+<li><a href="#def">1) What is a Network?</a></li>
+<li><a href="#dev">2) Why Developers Must Understand Networks</a></li>
+<li><a href="#macro">3) Macro View — Network Structure & Classification</a></li>
+<li><a href="#micro">4) Micro View — How Data Flows</a></li>
+<li><a href="#proto">5) Protocols & Models (OSI & TCP/IP)</a></li>
+<li><a href="#perf">6) Performance Metrics</a></li>
+<li><a href="#security">7) Network Security</a></li>
+<li><a href="#threats">8) Major Threats</a></li>
+<li><a href="#defense">9) Defense Technologies & Multi-Layer Protection</a></li>
+<li><a href="#refs">10) References</a></li>
+</ol>
+</nav>
+
+<section id="def">
+<h2>1) What is a Network?</h2>
+<p>A <strong>network</strong> is a communication system that connects two or more devices to exchange information. In simple terms, it’s “the road that lets computers talk to each other.”</p>
+<ul>
+<li>Smartphones, laptops, servers, routers—all operate over networks.</li>
+<li>Networks can be visualized as graphs with <strong>nodes</strong> (devices) and <strong>links</strong> (connections).</li>
+</ul>
+</section>
+
+<section id="dev">
+<h2>2) Why Developers Must Understand Networks</h2>
+<ul>
+<li>Nearly all modern applications—web, games, cloud—are network-based.</li>
+<li><strong>For development:</strong> APIs, TCP/UDP, HTTP requests, etc., require protocol knowledge.</li>
+<li><strong>For debugging:</strong> Understanding errors like <code>Connection timed out</code> or <code>Bad Gateway</code> needs network insight.</li>
+<li>Tools such as <code>ping</code>, <code>traceroute</code>, <code>netstat</code>, <code>nslookup</code> rely on these principles.</li>
+</ul>
+</section>
+
+<section id="macro">
+<h2>3) Macro View — Network Structure & Classification</h2>
+<h3>Network Components</h3>
+<ul>
+<li><strong>Node:</strong> device or endpoint (PC, server, phone)</li>
+<li><strong>Link:</strong> physical/wireless connection</li>
+<li><strong>Host:</strong> device that sends/receives data</li>
+<li><strong>Router/Switch:</strong> forwards or distributes traffic</li>
+</ul>
+<h3>By Range</h3>
+<table>
+<tr><th>Type</th><th>Scope</th><th>Example</th></tr>
+<tr><td>LAN</td><td>Local area (building)</td><td>School, office</td></tr>
+<tr><td>MAN</td><td>Metropolitan area</td><td>City network</td></tr>
+<tr><td>WAN</td><td>Wide area</td><td>Internet backbone</td></tr>
+</table>
+<p>Multiple LANs connect to form a WAN—the Internet is the largest WAN.</p>
+
+<h3>By Transmission Method</h3>
+<ul>
+<li><strong>Circuit-switched:</strong> Dedicated path before communication (e.g., telephony).</li>
+<li><strong>Packet-switched:</strong> Data split into packets (Internet standard).</li>
+</ul>
+
+<div class="info">
+<strong>Packet analogy:</strong> Header = address, Payload = content, Packet = header + payload.
+</div>
+</section>
+
+<section id="micro">
+<h2>4) Micro View — How Data Flows</h2>
+<h3>Protocols</h3>
+<p>Protocols define the <strong>rules of communication</strong>. Every computer must speak the same “language.”</p>
+<ul>
+<li><strong>HTTP:</strong> web transfer</li>
+<li><strong>FTP:</strong> file transfer</li>
+<li><strong>SMTP:</strong> email</li>
+<li><strong>TCP / UDP:</strong> transport-level delivery methods</li>
+</ul>
+</section>
+
+<section id="proto">
+<h2>5) Protocol Models — OSI & TCP/IP</h2>
+<div class="grid two">
+<div>
+<h3>OSI 7-Layer Model</h3>
+<table>
+<tr><th>Layer</th><th>Role</th><th>Examples</th></tr>
+<tr><td>7. Application</td><td>User interaction</td><td>HTTP, FTP</td></tr>
+<tr><td>6. Presentation</td><td>Encoding/Encryption</td><td>SSL, JPEG</td></tr>
+<tr><td>5. Session</td><td>Connection management</td><td>NetBIOS</td></tr>
+<tr><td>4. Transport</td><td>Reliable delivery</td><td>TCP, UDP</td></tr>
+<tr><td>3. Network</td><td>Routing, addressing</td><td>IP</td></tr>
+<tr><td>2. Data Link</td><td>Frame transmission</td><td>Ethernet</td></tr>
+<tr><td>1. Physical</td><td>Electrical signals</td><td>Cable</td></tr>
+</table>
+</div>
+<div>
+<h3>TCP/IP 4-Layer Model</h3>
+<table>
+<tr><th>Layer</th><th>Role</th><th>Examples</th></tr>
+<tr><td>Application</td><td>User services</td><td>HTTP, SMTP</td></tr>
+<tr><td>Transport</td><td>Data delivery</td><td>TCP, UDP</td></tr>
+<tr><td>Internet</td><td>Routing & addressing</td><td>IP, ICMP</td></tr>
+<tr><td>Network Access</td><td>Physical transfer</td><td>Ethernet, Wi-Fi</td></tr>
+</table>
+</div>
+</div>
+
+<h3>Encapsulation & Decapsulation</h3>
+<p>Data is wrapped with headers as it moves down the stack (encapsulation) and unwrapped at the receiver (decapsulation)—like packing and unpacking a parcel.</p>
+</section>
+
+<section id="perf">
+<h2>6) Network Performance Metrics</h2>
+<table>
+<tr><th>Metric</th><th>Description</th><th>Unit</th><th>Analogy</th></tr>
+<tr><td>Bandwidth</td><td>Maximum transmission capacity</td><td>Mbps/Gbps</td><td>Road width</td></tr>
+<tr><td>Latency</td><td>Time delay for data</td><td>ms</td><td>Delivery time</td></tr>
+<tr><td>Packet Loss</td><td>Percentage of lost packets</td><td>%</td><td>Lost parcels</td></tr>
+<tr><td>Throughput</td><td>Actual data rate</td><td>Mbps</td><td>Traffic flow</td></tr>
+<tr><td>Jitter</td><td>Variation in latency</td><td>ms</td><td>Unstable traffic lights</td></tr>
+</table>
+<div class="ok">Good networks = low latency, low loss, high throughput.</div>
+</section>
+
+<section id="security">
+<h2>7) Network Security — CIA Triad</h2>
+<p>Network security ensures data remains <em>confidential, unaltered, and available</em> during transmission.</p>
+<div class="grid three">
+<div>
+<h3>Confidentiality</h3>
+<p>Only authorized users access data.</p>
+<p class="pill">Encryption, Access Control</p>
+</div>
+<div>
+<h3>Integrity</h3>
+<p>Data remains unchanged during transmission.</p>
+<p class="pill">Hashes, Digital Signatures</p>
+</div>
+<div>
+<h3>Availability</h3>
+<p>Authorized users can access services when needed.</p>
+<p class="pill">DDoS protection, Backups</p>
+</div>
+</div>
+</section>
+
+<section id="threats">
+<h2>8) Common Network Threats</h2>
+<div class="grid two">
+<div>
+<ul>
+<li><strong>Sniffing:</strong> capturing packets secretly (password theft).</li>
+<li><strong>MITM (Man-in-the-Middle):</strong> attacker intercepts communication (no HTTPS).</li>
+<li><strong>DDoS:</strong> overwhelm server with traffic.</li>
+<li><strong>Phishing:</strong> fake websites/emails.</li>
+</ul>
+</div>
+<div>
+<ul>
+<li><strong>Malware:</strong> system infection, ransomware.</li>
+<li><strong>Session Hijacking:</strong> stealing login sessions.</li>
+<li><strong>Cookie Theft:</strong> capturing stored credentials.</li>
+</ul>
+</div>
+</div>
+</section>
+
+<section id="defense">
+<h2>9) Defense Technologies & Multi-Layer Protection</h2>
+<ul>
+<li><strong>Encryption:</strong> TLS (HTTPS), VPN</li>
+<li><strong>Authentication & Access Control:</strong> OTP, Certificates, VLAN isolation</li>
+<li><strong>Firewall:</strong> controls permitted traffic (e.g., WAF)</li>
+<li><strong>IDS/IPS:</strong> detect and prevent intrusions</li>
+<li><strong>DNSSEC / IPsec / Zero Trust:</strong> secure DNS, encrypted routing, continuous verification</li>
+</ul>
+
+<h3>Defense in Depth</h3>
+<table>
+<tr><th>Layer</th><th>Mechanism</th></tr>
+<tr><td>Network</td><td>Firewalls, VPNs</td></tr>
+<tr><td>Transport</td><td>TLS, IPsec</td></tr>
+<tr><td>Application</td><td>HTTPS, Authentication</td></tr>
+<tr><td>User</td><td>MFA, Security Training</td></tr>
+</table>
+</section>
+
+<section id="refs">
+<h2>10) References</h2>
+<ul>
+<li>RFC 4301 — Security Architecture for IPsec</li>
+<li>NIST SP 800-41 Rev.1 — Firewalls and Firewall Policy</li>
+<li>NIST SP 800-207 — Zero Trust Architecture</li>
+<li>Stallings, W. <em>Network Security Essentials</em></li>
+<li>Schneier, B. <em>Applied Cryptography</em></li>
+</ul>
+</section>
+</main>
+<a href="https://e2yeong.github.io/CyberSecurity-Lab/Report/Report2/Report3/Report4/Report5/Report6"><p class="Link">Back</p></a>
+<a href="https://e2yeong.github.io/CyberSecurity-Lab/Report/Report2/Report3/Report4/Report5/Report6/Report7"><p class="Link">Next</p></a>
+</body>
+</html>
