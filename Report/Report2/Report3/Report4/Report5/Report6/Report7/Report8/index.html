@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Malware – Types, Evolution, and Detection</title>
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, sans-serif; line-height: 1.6; margin: 0; padding: 0; background: #f8f9fa; color: #222; }
+    header { background: #2c3e50; color: #fff; padding: 1.5rem 2rem; text-align: center; }
+    section { max-width: 950px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.08); }
+    h2 { color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 0.5rem; }
+    h3 { color: #34495e; margin-top: 1.4rem; }
+    ul { padding-left: 1.5rem; }
+    li { margin-bottom: 0.5rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+    th, td { border: 1px solid #ddd; padding: 0.6rem; text-align: left; }
+    th { background: #f4f6f8; }
+    .formula { background: #eef7ff; border-left: 4px solid #3498db; padding: 0.7rem; margin: 1rem 0; font-family: monospace; }
+    .note { background: #fff3cd; border-left: 4px solid #ffcc00; padding: 0.7rem; margin: 1rem 0; border-radius: 6px; }
+    .example { background: #e8f8f5; border-left: 4px solid #1abc9c; padding: 0.7rem; margin: 1rem 0; }
+    .meta { font-size: 0.9rem; color: #555; margin-bottom: 1rem; font-style: italic; }
+    .Link { display: inline-block; margin-bottom: 1.5rem; padding: 0.6rem 1.2rem; background: #3498db; color: white; text-decoration: none; border-radius: 6px; margin-left: 50%; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🧬 Malware (Malicious Software)</h1>
+    <p>Understanding the Hidden Weapons of Cyber Threats</p>
+  </header>
+
+  <section>
+    <a href="https://blog.naver.com/ddak_sound/224051043180" class="meta">Originally posted on 2025.10.23</p>
+    <h2>1️⃣ What Is Malware?</h2>
+    <p><strong>Malware</strong> stands for <em>malicious software</em> — programs created with harmful intent.  
+    It hides inside computers or smartphones to steal data, disable systems, or spy on users.  
+    Today, malware is no longer just a prank — it’s an <strong>industrialized weapon</strong> used by criminal organizations, cyber spies, and hackers for money and power.</p>
+  </section>
+
+  <section>
+    <h2>2️⃣ The Evolution of Malware</h2>
+    <p>Early malware simply deleted files or froze PCs.  
+    Modern malware uses <strong>AI, encryption, and stealth</strong> techniques to evolve like living organisms.</p>
+    <table>
+      <tr><th>Type</th><th>Feature</th><th>Analogy</th></tr>
+      <tr><td>Static Malware</td><td>Fixed code; unchanging</td><td>Always the same face of a hacker</td></tr>
+      <tr><td>Polymorphic Malware</td><td>Encrypts and slightly changes its code each infection</td><td>A hacker wearing different clothes each time</td></tr>
+      <tr><td>Metamorphic Malware</td><td>Rewrites its entire code structure</td><td>Changing even its DNA</td></tr>
+    </table>
+    <p>Traditional antivirus tools relying on pattern matching are no longer enough.  
+    <strong>Behavioral analysis</strong> and <strong>AI-driven detection</strong> are now essential.</p>
+  </section>
+
+  <section>
+    <h2>3️⃣ Major Types of Malware</h2>
+    <table>
+      <tr><th>Type</th><th>Description</th><th>Example</th></tr>
+      <tr><td>Virus</td><td>Attaches itself to other files and spreads</td><td>ILOVEYOU</td></tr>
+      <tr><td>Worm</td><td>Self-replicates and spreads through networks</td><td>WannaCry</td></tr>
+      <tr><td>Trojan Horse</td><td>Disguises as a legitimate program</td><td>Emotet</td></tr>
+      <tr><td>Ransomware</td><td>Encrypts files and demands payment</td><td>Locky, WannaCry</td></tr>
+      <tr><td>Spyware</td><td>Secretly monitors user activity</td><td>DarkHotel</td></tr>
+      <tr><td>Rootkit</td><td>Hides deep within system kernel</td><td>Stuxnet</td></tr>
+      <tr><td>Fileless Malware</td><td>Runs directly from memory, leaves no file traces</td><td>Kovter</td></tr>
+      <tr><td>Botnet Agent</td><td>Links infected devices into a hacker-controlled network</td><td>Mirai</td></tr>
+    </table>
+    <div class="note">
+      <strong>Summary:</strong><br>
+      Virus → attaches to others<br>
+      Worm → spreads by itself<br>
+      Trojan → enters by deception<br>
+      Ransomware → demands money<br>
+      Rootkit → hides deeply<br>
+      Fileless → leaves no trace
+    </div>
+  </section>
+
+  <section>
+    <h2>4️⃣ Why Is Malware So Hard to Detect?</h2>
+    <h3>Encrypted Payloads</h3>
+    <p>Stores main code in encrypted form, decrypting only during execution — making it appear harmless in static scans.</p>
+
+    <h3>Obfuscation</h3>
+    <p>Changes variable names and code order to confuse analysis tools, like solving a locked puzzle.</p>
+
+    <h3>Kernel Rootkits</h3>
+    <p>Hide within the Windows kernel — the “heart” of the system — to conceal files and processes from view.</p>
+
+    <h3>Fileless Attacks</h3>
+    <p>Run entirely in RAM using tools like PowerShell or WMI, leaving almost no forensic evidence.</p>
+  </section>
+
+  <section>
+    <h2>5️⃣ Infection Vectors</h2>
+    <table>
+      <tr><th>Method</th><th>Description</th><th>Prevention</th></tr>
+      <tr><td>Phishing Emails</td><td>Tricks users into clicking malicious attachments or links</td><td>Never open unknown emails</td></tr>
+      <tr><td>Drive-by Downloads</td><td>Infection just by visiting compromised websites</td><td>Keep browsers updated</td></tr>
+      <tr><td>Cracked Software / Torrents</td><td>Malware hidden in illegal programs</td><td>Use legitimate software</td></tr>
+      <tr><td>Browser Extensions</td><td>Injects ads or trackers via plugins</td><td>Minimize unnecessary extensions</td></tr>
+      <tr><td>Supply Chain Attacks</td><td>Compromises trusted update servers</td><td>Verify digital signatures</td></tr>
+      <tr><td>USB Autorun</td><td>Executes malware when USB is plugged in</td><td>Disable autorun features</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>6️⃣ References</h2>
+    <ul>
+      <li>MITRE ATT&CK Framework</li>
+      <li>NIST SP 800-83 Rev.1 — <em>Malware Incident Prevention and Handling</em></li>
+      <li>Symantec Threat Landscape Report</li>
+      <li>Palo Alto Unit 42 Threat Intelligence Brief</li>
+      <li><em>Practical Malware Analysis</em> — Sikorski & Honig (No Starch Press)</li>
+    </ul>
+  </section>
+
+  <a href="https://e2yeong.github.io/CyberSecurity-Lab/Report3/Report4/Report5/Report6/Report7/"><p class="Link">Back</p></a>
+  <a href="https://e2yeong.github.io/CyberSecurity-Lab/Report3/Report4/Report5/Report6/Report7/Report8/Report9"><p class="Link">Next</p></a>
+</body>
+</html>
