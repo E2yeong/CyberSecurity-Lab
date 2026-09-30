@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Page moved</title>
+<script>
+// The notes used to live in deeply nested folders. Old links land here and
+// are forwarded to the page's new address.
+(function () {
+  var base = "/CyberSecurity-Lab/";
+  var moved = {
+  "Network": "notes/02-what-is-a-network/",
+  "Network/Network2": "notes/03-why-hackers-use-linux/",
+  "Network/Network2/Network3": "notes/04-basic-linux-commands/",
+  "Network/Network2/Network3/Network4": "notes/05-network-hacking-concepts/",
+  "Network/Network2/Network3/Network4/Network5": "notes/06-mac-address-spoofing/",
+  "Network/Network2/Network3/Network4/Network5/Network6": "notes/07-monitor-mode-packet-sniffing/",
+  "Network/Network2/Network3/Network4/Network5/Network6/Network7": "notes/08-gaining-access-defensive-guide/",
+  "Report": "notes/09-password-vulnerabilities/",
+  "Report/Report2": "notes/10-password-hashing/",
+  "Report/Report2/Report3": "notes/11-symmetric-encryption-aes/",
+  "Report/Report2/Report3/Report4": "notes/12-asymmetric-encryption/",
+  "Report/Report2/Report3/Report4/Report5": "notes/13-tls-and-https/",
+  "Report/Report2/Report3/Report4/Report5/Report6": "notes/14-pki-browser-padlock/",
+  "Report/Report2/Report3/Report4/Report5/Report6/Report7": "notes/15-network-security-fundamentals/",
+  "Report/Report2/Report3/Report4/Report5/Report6/Report7/Report8": "notes/16-malware/",
+  "Report/Report2/Report3/Report4/Report5/Report6/Report7/Report8/Report9": "notes/17-social-engineering/",
+  "Report/Projects": "https://e2yeong.github.io/password-security-toolkit/strength-checker/",
+  "Report/Projects/Projects2Hasher": "https://e2yeong.github.io/password-security-toolkit/hasher/"
+};
+  var path = decodeURIComponent(location.pathname);
+  if (path.indexOf(base) !== 0) return;
+  var old = path.slice(base.length).replace(/\u115f/g, "").replace(/index\.html$/, "").replace(/^\/+|\/+$/g, "");
+  var target = moved[old];
+  if (target === undefined) return;
+  location.replace(/^https?:/.test(target) ? target : base + target + location.hash);
+})();
+</script>
+<style>body{font-family:system-ui,sans-serif;max-width:640px;margin:4rem auto;padding:0 1rem;color:#222}</style>
+</head>
+<body>
+<h1>Page not found</h1>
+<p>This page may have moved. See the <a href="/CyberSecurity-Lab/">list of all notes</a>.</p>
+</body>
+</html>
