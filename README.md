@@ -4,7 +4,7 @@ Notes I wrote while studying cybersecurity: networking and Linux basics, cryptog
 
 **Read them online:** https://e2yeong.github.io/CyberSecurity-Lab/
 
-The code projects that grew out of these notes (a password strength checker and a SHA-256 vs Argon2id hasher) now live in their own repository: **[password-security-toolkit](https://github.com/E2yeong/password-security-toolkit)**.
+This repository contains study notes. For runnable code projects, see my [project overview](https://github.com/E2yeong#selected-projects).
 
 > Offensive techniques are described at a conceptual level for authorized lab practice and defense. No exploit code or step-by-step intrusion instructions are included.
 
@@ -61,6 +61,5 @@ To read offline, clone the repository and open `index.html` in a browser.
 
 ## Related
 
-- [password-security-toolkit](https://github.com/E2yeong/password-security-toolkit): strength checker and hasher built from notes 09 and 10
 - [ComputerScience](https://github.com/E2yeong/ComputerScience): algorithms and the number theory behind RSA
 - [Portfolio](https://e2yeong.github.io/my-portfolio/)
